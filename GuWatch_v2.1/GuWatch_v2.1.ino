@@ -60,6 +60,9 @@ int clockPin = 3;  // The pin number of the clock pin.
 int dataPin = 5;  // The pin number of the data pin.
 int busyPin = 6;  // The pin number of the busy pin.
 
+int song_number = 0;
+int stepsong = 0;
+
 Wtv020sd16p wtv020sd16p(resetPin,clockPin,dataPin,busyPin);
 
 
@@ -100,8 +103,8 @@ void loop()  {
   if(mode <= 0)  {
     mode = 0;
   }
-  if(mode >= 5)  {
-    mode = 5;
+  if(mode >= 4)  {
+    mode = 4;
   }
 
 // Display
@@ -117,13 +120,15 @@ void loop()  {
   if(state_push == 1 && mode == 3) {
     display_count();
     }
-    
+  if(state_push == 1 && mode == 4) {
+    display_mp3();
+    }    
 
 //Function    
   if(state_push == 0 && mode == 1)  {
     delay(DEBOUNCE);
     uView.clear(PAGE);
-    count=1;
+    count = 1;
   }
   while(count == 1)  {
     now_aday();
@@ -132,7 +137,7 @@ void loop()  {
   if(state_push == 0 && mode == 2)  {
     delay(DEBOUNCE);
     uView.clear(PAGE);
-    count=2;
+    count = 2;
   }
   while(count == 2)  {
     lander_game();
@@ -141,41 +146,33 @@ void loop()  {
   if(state_push == 0 && mode == 3)  {
     delay(DEBOUNCE);
     uView.clear(PAGE);
-    count=2;
+    count = 3;
   }
-  while(count == 2)  {
+  while(count == 3)  {
     stop_watch();
   }
-
-//Serial.print(mode);
-//Serial.print("    ");
-//Serial.println(count);
-
-
-
-
-//Serial.print(num);
-//Serial.print("    ");
-//Serial.print(now_time);
-//Serial.print("    ");
-//Serial.print(pre_time);
-//Serial.print("    ");
-//Serial.print(now_time - millis());
-//Serial.println("    ");
-
-
-}
+  
+  if(state_push == 0 && mode == 4)  {
+    delay(DEBOUNCE);
+    uView.clear(PAGE);
+    count = 4;
+  }
+  while(count == 4)  {
+    mp3();
+  }
+  
+}   //  End loop
 
 void display_main() {
   uView.clear(PAGE);
-  uView.setFontType(0); 
-  uView.setCursor(0,  0);      
-  uView.print("Chiang Mai");  
-  uView.setCursor(0,  15);      
-  uView.print("Maker Club");
   uView.setFontType(1); 
-  uView.setCursor(0, 30);   
+  uView.setCursor(0, 7);   
   uView.print(" Watch");
+  uView.setFontType(0); 
+  uView.setCursor(0,  30);      
+  uView.print("Chiang Mai");  
+  uView.setCursor(0,  40);      
+  uView.print("Maker Club");
   uView.display();
 }
 
@@ -183,10 +180,10 @@ void display_clock()  {
   uView.clear(PAGE);
   uView.setFontType(0); 
   uView.setCursor(0,  0);      
-  uView.print("Mode :");
+  uView.print("Mode : 1");
   uView.setFontType(1);  
   uView.setCursor(0,  15);      
-  uView.print("Clock");
+  uView.print(" Clock");
   uView.display();  
 }
 
@@ -194,10 +191,10 @@ void display_game()  {
   uView.clear(PAGE);
   uView.setFontType(0); 
   uView.setCursor(0,  0);      
-  uView.print("Mode :");
+  uView.print("Mode : 2");
   uView.setFontType(1);  
   uView.setCursor(0,  15);      
-  uView.print("Lander");
+  uView.print(" Lander");
   uView.setCursor(0,  30);   
   uView.print("  Game");
   uView.display();  
@@ -207,12 +204,23 @@ void display_count()  {
   uView.clear(PAGE);
   uView.setFontType(0); 
   uView.setCursor(0,  0);      
-  uView.print("Mode :");
+  uView.print("Mode : 3");
   uView.setFontType(1);  
   uView.setCursor(0,  15);      
-  uView.print("Stop");
+  uView.print(" Stop");
   uView.setCursor(0,  30);   
   uView.print("  Watch");
+  uView.display();  
+}
+
+void display_mp3()  {
+  uView.clear(PAGE);
+  uView.setFontType(0); 
+  uView.setCursor(0,  0);      
+  uView.print("Mode : 4");
+  uView.setFontType(1);  
+  uView.setCursor(0,  15);      
+  uView.print(" MP3");
   uView.display();  
 }
 
