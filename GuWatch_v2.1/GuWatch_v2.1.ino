@@ -19,7 +19,8 @@
 //Instantiate objects from class definitions
 RTC_DS1307 RTC;
 /**************  Variable  ***************************/
-int mode=0;
+int mode = 0;
+
 byte push = A1;
 byte left = A0;
 byte right = A2;
@@ -31,7 +32,7 @@ int state_push;
 #define DEBOUNCE 200
 
 /**************  Clock  ******************************/
-int count=0;
+int count = 0;
 int clocksize = 24;
 
 static uint8_t x0,  y0,  x1,  y1;
@@ -63,8 +64,11 @@ int busyPin = 6;  // The pin number of the busy pin.
 int song_number = 0;
 int stepsong = 0;
 
-Wtv020sd16p wtv020sd16p(resetPin,clockPin,dataPin,busyPin);
+Wtv020sd16p wtv020sd16p(resetPin, clockPin, dataPin, busyPin);
 
+/*************  Battery Warning **********************/
+float voltage = 0;
+int inputvoltage = 0;
 
 void setup () {
   Wire.begin();
@@ -74,154 +78,166 @@ void setup () {
   pinMode(push, INPUT);
   pinMode(left, INPUT);
   pinMode(right, INPUT);
-  
+  pinMode(A3, INPUT);
+
   wtv020sd16p.reset();
-  
-//  RTC.adjust(DateTime(__DATE__, __TIME__));
-  
+
+  //  RTC.adjust(DateTime(__DATE__, __TIME__));
+
   uView.begin();		// init and start MicroView
   uView.clear(PAGE);	// erase the display memory buffer
 
-//  wtv020sd16p.playVoice(4);
-  
 }
- 
-void loop()  {
+
+void loop()  {   
+  inputvoltage = analogRead(A3);
+  voltage = inputvoltage * (5.0 / 1023.0);
+  while(voltage <= .5) battery_check();
+  
   state_push = digitalRead(push);
   state_right = digitalRead(right);
   state_left = digitalRead(left);
-  
-// Select mode
-  if(state_right == 0)  {
+
+  // Select mode
+  if (state_right == 0)  {
     delay(DEBOUNCE);
     mode++;
   }
-  if(state_left == 0)  {
+  if (state_left == 0)  {
     delay(DEBOUNCE);
     mode--;
-  }  
-  if(mode <= 0)  {
-    mode = 0;
-  }
-  if(mode >= 4)  {
-    mode = 4;
   }
 
-// Display
-  if(mode == 0) {
+  if (mode <= 0)  mode = 0;
+  if (mode >= 4)  mode = 4;
+
+  // Display
+  if (state_push == 1 && mode == 0) {
     display_main();
-    }
-  if(state_push == 1 && mode == 1) {
+  }
+  if (state_push == 1 && mode == 1) {
     display_clock();
-    }  
-  if(state_push == 1 && mode == 2) {
+  }
+  if (state_push == 1 && mode == 2) {
     display_game();
-    }
-  if(state_push == 1 && mode == 3) {
+  }
+  if (state_push == 1 && mode == 3) {
     display_count();
-    }
-  if(state_push == 1 && mode == 4) {
+  }
+  if (state_push == 1 && mode == 4) {
     display_mp3();
-    }    
+  }
 
-//Function    
-  if(state_push == 0 && mode == 1)  {
+  //Function
+  if (state_push == 0 && mode == 1)  {
     delay(DEBOUNCE);
     uView.clear(PAGE);
     count = 1;
   }
-  while(count == 1)  {
+  while (count == 1)  {
     now_aday();
   }
 
-  if(state_push == 0 && mode == 2)  {
+  if (state_push == 0 && mode == 2)  {
     delay(DEBOUNCE);
     uView.clear(PAGE);
     count = 2;
   }
-  while(count == 2)  {
+  while (count == 2)  {
     lander_game();
   }
-  
-  if(state_push == 0 && mode == 3)  {
+
+  if (state_push == 0 && mode == 3)  {
     delay(DEBOUNCE);
     uView.clear(PAGE);
     count = 3;
   }
-  while(count == 3)  {
+  while (count == 3)  {
     stop_watch();
   }
-  
-  if(state_push == 0 && mode == 4)  {
+
+  if (state_push == 0 && mode == 4)  {
     delay(DEBOUNCE);
     uView.clear(PAGE);
     count = 4;
   }
-  while(count == 4)  {
+  while (count == 4)  {
     mp3();
   }
-  
+
 }   //  End loop
 
 void display_main() {
   uView.clear(PAGE);
-  uView.setFontType(1); 
-  uView.setCursor(0, 7);   
+  uView.setFontType(1);
+  uView.setCursor(0, 7);
   uView.print(" Watch");
-  uView.setFontType(0); 
-  uView.setCursor(0,  30);      
-  uView.print("Chiang Mai");  
-  uView.setCursor(0,  40);      
+  uView.setFontType(0);
+  uView.setCursor(0,  30);
+  uView.print("Chiang Mai");
+  uView.setCursor(0,  40);
   uView.print("Maker Club");
   uView.display();
 }
 
 void display_clock()  {
   uView.clear(PAGE);
-  uView.setFontType(0); 
-  uView.setCursor(0,  0);      
+  uView.setFontType(0);
+  uView.setCursor(0,  0);
   uView.print("Mode : 1");
-  uView.setFontType(1);  
-  uView.setCursor(0,  15);      
+  uView.setFontType(1);
+  uView.setCursor(0,  15);
   uView.print(" Clock");
-  uView.display();  
+  uView.display();
 }
 
 void display_game()  {
   uView.clear(PAGE);
-  uView.setFontType(0); 
-  uView.setCursor(0,  0);      
+  uView.setFontType(0);
+  uView.setCursor(0,  0);
   uView.print("Mode : 2");
-  uView.setFontType(1);  
-  uView.setCursor(0,  15);      
+  uView.setFontType(1);
+  uView.setCursor(0,  15);
   uView.print(" Lander");
-  uView.setCursor(0,  30);   
+  uView.setCursor(0,  30);
   uView.print("  Game");
-  uView.display();  
+  uView.display();
 }
 
 void display_count()  {
   uView.clear(PAGE);
-  uView.setFontType(0); 
-  uView.setCursor(0,  0);      
+  uView.setFontType(0);
+  uView.setCursor(0,  0);
   uView.print("Mode : 3");
-  uView.setFontType(1);  
-  uView.setCursor(0,  15);      
+  uView.setFontType(1);
+  uView.setCursor(0,  15);
   uView.print(" Stop");
-  uView.setCursor(0,  30);   
+  uView.setCursor(0,  30);
   uView.print("  Watch");
-  uView.display();  
+  uView.display();
 }
 
 void display_mp3()  {
   uView.clear(PAGE);
-  uView.setFontType(0); 
-  uView.setCursor(0,  0);      
+  uView.setFontType(0);
+  uView.setCursor(0,  0);
   uView.print("Mode : 4");
-  uView.setFontType(1);  
-  uView.setCursor(0,  15);      
+  uView.setFontType(1);
+  uView.setCursor(0,  15);
   uView.print(" MP3");
-  uView.display();  
+  uView.display();
+}
+
+void battery_check()  {
+  uView.clear(PAGE);
+  uView.setFontType(0);
+  uView.setCursor(0,  0);
+  uView.print("Warning !");
+  uView.setCursor(0,  15);
+  uView.print(" LOW");
+  uView.setCursor(0,  25);
+  uView.print("  Energy");
+  uView.display();
 }
 
 
