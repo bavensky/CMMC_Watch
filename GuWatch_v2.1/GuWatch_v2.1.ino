@@ -83,7 +83,7 @@ void setup () {
 
   wtv020sd16p.reset();
 
-//  RTC.adjust(DateTime(__DATE__, __TIME__));
+  RTC.adjust(DateTime(__DATE__, __TIME__));
 
   uView.begin();		// init and start MicroView
   uView.clear(PAGE);	// erase the display memory buffer

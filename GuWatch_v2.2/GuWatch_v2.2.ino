@@ -14,10 +14,16 @@
 #include <MicroView.h>
 #include <Wtv020sd16p.h>
 #include <Wire.h>
-#include "RTClib.h"
+
 
 //Instantiate objects from class definitions
-RTC_DS1307 RTC;
+#define DS1307_ADDRESS 0x68   // Address IC 0x68
+byte zero = 0x00; 
+int _weekDay;
+int _second, _minute, _hour;
+int _monthDay, _month, _year; 
+int control, d1, d2; 
+  
 /**************  Variable  ***************************/
 int mode = 0;
 
@@ -73,7 +79,6 @@ float voltage = 0;
 /*###############################################################*/
 void setup () {
   Wire.begin();
-  RTC.begin();
   Serial.begin(9600);
 
   pinMode(push, INPUT);
@@ -83,7 +88,7 @@ void setup () {
 
   wtv020sd16p.reset();
 
-//  RTC.adjust(DateTime(__DATE__, __TIME__));
+//  setDateTime();
 
   uView.begin();		// init and start MicroView
   uView.clear(PAGE);	// erase the display memory buffer
