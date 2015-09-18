@@ -32,12 +32,13 @@ int state_push;
 /**************  Clock  ******************************/
 int count = 0;
 #define CLOCK_SIZE 23 
-#define HOUR 21
-#define MINUTE 18
-#define SECOND 35
-#define DAY 18
-#define MONTH 9
-#define YEAR 2015
+
+int HOUR = 1;
+int MINUTE = 1;
+int SECOND = 1;
+int DAY = 1;
+int MONTH = 1;
+int YEAR = 2000;
 
 const uint8_t maxW = uView.getLCDWidth();
 const uint8_t midW = maxW/2;
@@ -112,7 +113,7 @@ void loop()  {
   }
 
   if (mode <= 0)  mode = 0;
-  if (mode >= 4)  mode = 4;
+  if (mode >= 5)  mode = 5;
 
   // Display
   if (state_push == 1 && mode == 0) {
@@ -122,15 +123,18 @@ void loop()  {
     display_clock();
   }
   if (state_push == 1 && mode == 2) {
-    display_game();
+    display_settime();
   }
   if (state_push == 1 && mode == 3) {
-    display_count();
+    display_game();
   }
   if (state_push == 1 && mode == 4) {
+    display_count();
+  }
+  if (state_push == 1 && mode == 5) {
     display_mp3();
   }
-
+  
   //Function
   if (state_push == 0 && mode == 1)  {
     delay(DEBOUNCE);
@@ -147,7 +151,7 @@ void loop()  {
     count = 2;
   }
   while (count == 2)  {
-    lander_game();
+    settime();
   }
 
   if (state_push == 0 && mode == 3)  {
@@ -156,7 +160,7 @@ void loop()  {
     count = 3;
   }
   while (count == 3)  {
-    stop_watch();
+    lander_game();
   }
 
   if (state_push == 0 && mode == 4)  {
@@ -165,9 +169,17 @@ void loop()  {
     count = 4;
   }
   while (count == 4)  {
-    mp3();
+    stop_watch();
   }
 
+  if (state_push == 0 && mode == 5)  {
+    delay(DEBOUNCE);
+    uView.clear(PAGE);
+    count = 5;
+  }
+  while (count == 5)  {
+    mp3();
+  }
 }   //  End loop
 
 /*###############################################################*/
@@ -195,11 +207,24 @@ void display_clock()  {
   uView.display();
 }
 
-void display_game()  {
+void display_settime()  {
   uView.clear(PAGE);
   uView.setFontType(0);
   uView.setCursor(0,  0);
   uView.print("Mode : 2");
+  uView.setFontType(1);
+  uView.setCursor(0,  15);
+  uView.print(" Set");
+  uView.setCursor(0,  30);
+  uView.print("  Time");
+  uView.display();
+}
+
+void display_game()  {
+  uView.clear(PAGE);
+  uView.setFontType(0);
+  uView.setCursor(0,  0);
+  uView.print("Mode : 3");
   uView.setFontType(1);
   uView.setCursor(0,  15);
   uView.print(" Lander");
@@ -212,7 +237,7 @@ void display_count()  {
   uView.clear(PAGE);
   uView.setFontType(0);
   uView.setCursor(0,  0);
-  uView.print("Mode : 3");
+  uView.print("Mode : 4");
   uView.setFontType(1);
   uView.setCursor(0,  15);
   uView.print(" Stop");
@@ -225,7 +250,7 @@ void display_mp3()  {
   uView.clear(PAGE);
   uView.setFontType(0);
   uView.setCursor(0,  0);
-  uView.print("Mode : 4");
+  uView.print("Mode : 5");
   uView.setFontType(1);
   uView.setCursor(0,  15);
   uView.print(" MP3");
