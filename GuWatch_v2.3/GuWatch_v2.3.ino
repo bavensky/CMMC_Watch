@@ -14,16 +14,8 @@
 #include <MicroView.h>
 #include <Wtv020sd16p.h>
 #include <Wire.h>
+#include <Time.h>
 
-
-//Instantiate objects from class definitions
-#define DS1307_ADDRESS 0x68   // Address IC 0x68
-byte zero = 0x00; 
-int _weekDay;
-int _second, _minute, _hour;
-int _monthDay, _month, _year; 
-int control, d1, d2; 
-  
 /**************  Variable  ***************************/
 int mode = 0;
 
@@ -39,11 +31,19 @@ int state_push;
 
 /**************  Clock  ******************************/
 int count = 0;
-int clocksize = 24;
+#define CLOCK_SIZE 23 
 
-static uint8_t x0,  y0,  x1,  y1;
-static float radianshour,  radiansmin,  radianssec,  hourx,  houry,  minx,  miny,  secx,  secy;
-static boolean drawnFirst  =  false;
+#define HOUR 21
+#define MINUTE 18
+#define SECOND 35
+#define DAY 18
+#define MONTH 9
+#define YEAR 2015
+
+const uint8_t maxW = uView.getLCDWidth();
+const uint8_t midW = maxW/2;
+const uint8_t maxH = uView.getLCDHeight();
+const uint8_t midH = maxH/2;
 
 /**************  Game  ******************************/
 float y  =  5;
@@ -80,7 +80,9 @@ float voltage = 0;
 void setup () {
   Wire.begin();
   Serial.begin(9600);
-
+  uView.begin();    // init and start MicroView
+  uView.clear(PAGE);  // erase the display memory buffer  
+  
   pinMode(push, INPUT);
   pinMode(left, INPUT);
   pinMode(right, INPUT);
@@ -88,11 +90,8 @@ void setup () {
 
   wtv020sd16p.reset();
 
-//  setDateTime();
-
-  uView.begin();		// init and start MicroView
-  uView.clear(PAGE);	// erase the display memory buffer
-
+  //  setDateTime();
+  setTime(HOUR, MINUTE, SECOND, DAY, MONTH, YEAR);
 }
 /*###############################################################*/
 void loop()  {   
@@ -171,6 +170,7 @@ void loop()  {
   }
 
 }   //  End loop
+
 /*###############################################################*/
 void display_main() {
   uView.clear(PAGE);
