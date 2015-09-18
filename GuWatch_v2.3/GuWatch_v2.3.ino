@@ -32,7 +32,6 @@ int state_push;
 /**************  Clock  ******************************/
 int count = 0;
 #define CLOCK_SIZE 23 
-
 #define HOUR 21
 #define MINUTE 18
 #define SECOND 35
