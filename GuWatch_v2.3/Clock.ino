@@ -8,7 +8,6 @@ void now_aday()  {
   }
   
   drawFace();
-    
   static boolean firstDraw = false;
   static unsigned long mSec = millis() + 1000;
   static float degresshour, degressmin, degresssec,

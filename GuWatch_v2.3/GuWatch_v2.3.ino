@@ -15,6 +15,7 @@
 #include <Wtv020sd16p.h>
 #include <Wire.h>
 #include <Time.h>
+#include <EEPROM.h>
 
 /**************  Variable  ***************************/
 int mode = 0;
@@ -33,12 +34,16 @@ int state_push;
 int count = 0;
 #define CLOCK_SIZE 23 
 
-int HOUR = 1;
-int MINUTE = 1;
-int SECOND = 1;
-int DAY = 1;
-int MONTH = 1;
-int YEAR = 2000;
+int ee_hour = 1, ee_minute = 2, ee_second = 3;
+int ee_day = 4, ee_month = 5, ee_year = 6;
+
+int HOUR = 0;
+int MINUTE = 0;
+int SECOND = 0;
+int DAY = 0;
+int MONTH = 0;
+int YEAR = 0;
+int stepset = 0;
 
 const uint8_t maxW = uView.getLCDWidth();
 const uint8_t midW = maxW/2;
@@ -91,7 +96,13 @@ void setup () {
   wtv020sd16p.reset();
 
   //  setDateTime();
-  setTime(HOUR, MINUTE, SECOND, DAY, MONTH, YEAR);
+//  HOUR = EEPROM.read(ee_hour);
+//  MINUTE = EEPROM.read(ee_minute);
+//  SECOND = EEPROM.read(ee_second);
+//  DAY = EEPROM.read(ee_day);
+//  MONTH = EEPROM.read(ee_month);
+//  YEAR = 2000 + EEPROM.read(ee_year);
+//  setTime(HOUR, MINUTE, SECOND, DAY, MONTH, YEAR);
 }
 /*###############################################################*/
 void loop()  {   
@@ -148,7 +159,9 @@ void loop()  {
   if (state_push == 0 && mode == 2)  {
     delay(DEBOUNCE);
     uView.clear(PAGE);
-    count = 2;
+    YEAR += 2000;
+    stepset = 1;
+    count = 2; 
   }
   while (count == 2)  {
     settime();
