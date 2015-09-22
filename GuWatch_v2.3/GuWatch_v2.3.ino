@@ -40,9 +40,9 @@ int ee_day = 4, ee_month = 5, ee_year = 6;
 int HOUR = 0;
 int MINUTE = 0;
 int SECOND = 0;
-int DAY = 0;
-int MONTH = 0;
-int YEAR = 0;
+int DAY = 26;
+int MONTH = 9;
+int YEAR = 2015;
 int stepset = 0;
 
 const uint8_t maxW = uView.getLCDWidth();
@@ -96,13 +96,13 @@ void setup () {
   wtv020sd16p.reset();
 
   //  setDateTime();
-//  HOUR = EEPROM.read(ee_hour);
-//  MINUTE = EEPROM.read(ee_minute);
-//  SECOND = EEPROM.read(ee_second);
+  HOUR = EEPROM.read(ee_hour);
+  MINUTE = EEPROM.read(ee_minute);
+  SECOND = EEPROM.read(ee_second);
 //  DAY = EEPROM.read(ee_day);
 //  MONTH = EEPROM.read(ee_month);
 //  YEAR = 2000 + EEPROM.read(ee_year);
-//  setTime(HOUR, MINUTE, SECOND, DAY, MONTH, YEAR);
+  setTime(HOUR, MINUTE, SECOND, DAY, MONTH, YEAR);
 }
 /*###############################################################*/
 void loop()  {   
