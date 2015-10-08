@@ -99,9 +99,6 @@ void setup () {
   HOUR = EEPROM.read(ee_hour);
   MINUTE = EEPROM.read(ee_minute);
   SECOND = EEPROM.read(ee_second);
-//  DAY = EEPROM.read(ee_day);
-//  MONTH = EEPROM.read(ee_month);
-//  YEAR = 2000 + EEPROM.read(ee_year);
   setTime(HOUR, MINUTE, SECOND, DAY, MONTH, YEAR);
 }
 /*###############################################################*/
